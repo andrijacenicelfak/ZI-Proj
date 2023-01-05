@@ -1,3 +1,4 @@
+
 namespace Algorithms.Files
 {
     class FileEncription
@@ -33,6 +34,44 @@ namespace Algorithms.Files
                 byte[] enc = Algorithm.Decrypt(data);
                 output.Write(enc);
             }
+            output.Close();
+            input.Close();
+        }
+
+        public void EncryptBMPFile(string inputName, string outputName)
+        {
+            FileStream input = new FileStream(inputName, FileMode.Open, FileAccess.Read);
+            byte[] header = new byte[54];
+            int count = input.Read(header, 0, 54);
+            FileStream output = new FileStream(outputName, FileMode.Create, FileAccess.Write);
+            output.Write(header, 0, 54);
+
+            byte[] data = new byte[512];
+            while (input.Read(data, 0, 512) > 0)
+            {
+                byte[] enc = Algorithm.Encrypt(data);
+                output.Write(enc);
+            }
+
+            output.Close();
+            input.Close();
+        }
+
+        public void DecryptBMPFile(string inputName, string outputName)
+        {
+            FileStream input = new FileStream(inputName, FileMode.Open, FileAccess.Read);
+            byte[] header = new byte[54];
+            int count = input.Read(header, 0, 54);
+            FileStream output = new FileStream(outputName, FileMode.Create, FileAccess.Write);
+            output.Write(header, 0, 54);
+
+            byte[] data = new byte[512];
+            while (input.Read(data, 0, 512) > 0)
+            {
+                byte[] enc = Algorithm.Decrypt(data);
+                output.Write(enc);
+            }
+
             output.Close();
             input.Close();
         }

@@ -7,3 +7,5 @@ Pomoc za greske :
 Za knapsack : 
     https://www.geeksforgeeks.org/knapsack-encryption-algorithm-in-cryptography/
     https://www.youtube.com/watch?v=7IQRoCMiEnQ&ab_channel=Trouble-Free
+Bmp file : 
+    https://medium.com/sysf/bits-to-bitmaps-a-simple-walkthrough-of-bmp-image-format-765dc6857393

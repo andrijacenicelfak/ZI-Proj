@@ -26,12 +26,12 @@ namespace Algorithms
             for (int i = 0; i < 8; i++)
             {
                 publicKey[i] = (privateKey[i] * N) % M;
-                Console.Write(publicKey[i] + " ");
+                // Console.Write(publicKey[i] + " ");
             }
-            Console.WriteLine();
+            // Console.WriteLine();
             N_1 = 1;
             while ((N * N_1) % M != 1) N_1++;
-            Console.WriteLine(N_1);
+            // Console.WriteLine(N_1);
         }
 
         public int[] Encrypt(byte[] bytes)

@@ -1,18 +1,16 @@
 ﻿using Algorithms;
 using Algorithms.Files;
-/*
-int[] privateKey = { 1, 2, 4, 9, 17, 34, 69, 140 };
-int M = 313;
-int N = 101;
 
-FileEncription file = new FileEncription(new KnapsackInterface(N, M, privateKey));
-*/
+// int[] privateKey = { 1, 2, 4, 9, 17, 34, 69, 140 };
+// int M = 313;
+// int N = 101;
+
+// FileEncription file = new FileEncription(new KnapsackInterface(N, M, privateKey));
 
 FileEncription file = new FileEncription(new RC6Interface("Jasammalazaba"));
 
-file.EncryptFile("file.txt", "fileenc.txt");
-
-file.DecryptFile("fileenc.txt", "filedec.txt");
+file.EncryptBMPFile("bmp_24.bmp", "bmp_24_enc.bmp");
+file.DecryptBMPFile("bmp_24_enc.bmp", "bmp_24_dec.bmp");
 
 /*
 //RC6 CRT/Obican
