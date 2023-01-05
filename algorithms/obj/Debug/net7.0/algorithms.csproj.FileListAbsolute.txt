@@ -1,0 +1,15 @@
+D:\Fakultet\Zastita Informacija\Workspace\algorithms\bin\Debug\net7.0\algorithms.exe
+D:\Fakultet\Zastita Informacija\Workspace\algorithms\bin\Debug\net7.0\algorithms.deps.json
+D:\Fakultet\Zastita Informacija\Workspace\algorithms\bin\Debug\net7.0\algorithms.runtimeconfig.json
+D:\Fakultet\Zastita Informacija\Workspace\algorithms\bin\Debug\net7.0\algorithms.dll
+D:\Fakultet\Zastita Informacija\Workspace\algorithms\bin\Debug\net7.0\algorithms.pdb
+D:\Fakultet\Zastita Informacija\Workspace\algorithms\obj\Debug\net7.0\algorithms.csproj.AssemblyReference.cache
+D:\Fakultet\Zastita Informacija\Workspace\algorithms\obj\Debug\net7.0\algorithms.GeneratedMSBuildEditorConfig.editorconfig
+D:\Fakultet\Zastita Informacija\Workspace\algorithms\obj\Debug\net7.0\algorithms.AssemblyInfoInputs.cache
+D:\Fakultet\Zastita Informacija\Workspace\algorithms\obj\Debug\net7.0\algorithms.AssemblyInfo.cs
+D:\Fakultet\Zastita Informacija\Workspace\algorithms\obj\Debug\net7.0\algorithms.csproj.CoreCompileInputs.cache
+D:\Fakultet\Zastita Informacija\Workspace\algorithms\obj\Debug\net7.0\algorithms.dll
+D:\Fakultet\Zastita Informacija\Workspace\algorithms\obj\Debug\net7.0\refint\algorithms.dll
+D:\Fakultet\Zastita Informacija\Workspace\algorithms\obj\Debug\net7.0\algorithms.pdb
+D:\Fakultet\Zastita Informacija\Workspace\algorithms\obj\Debug\net7.0\algorithms.genruntimeconfig.cache
+D:\Fakultet\Zastita Informacija\Workspace\algorithms\obj\Debug\net7.0\ref\algorithms.dll

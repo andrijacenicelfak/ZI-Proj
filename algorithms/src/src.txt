@@ -1,0 +1,9 @@
+Za key expansion za RC6 :
+    https://www.researchgate.net/figure/RC6-Algorithm-Structure-21-The-Key-Expansion_fig1_332388022
+Pomoc za greske : 
+    https://github.com/TakLun/RC6
+    Nije htelo da mi radi pa sam onda pogledao kako su drugi radili, ovde postoji ovaj moduo,
+    Kada sam to dodao radi!
+Za knapsack : 
+    https://www.geeksforgeeks.org/knapsack-encryption-algorithm-in-cryptography/
+    https://www.youtube.com/watch?v=7IQRoCMiEnQ&ab_channel=Trouble-Free
