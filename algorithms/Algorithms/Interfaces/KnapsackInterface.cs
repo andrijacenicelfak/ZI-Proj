@@ -1,5 +1,5 @@
 
-namespace Algorithms.Files
+namespace Algorithms.Interfaces
 {
     class KnapsackInterface : AlgorithmInterface
     {
@@ -18,8 +18,12 @@ namespace Algorithms.Files
         }
         public byte[] Decrypt(byte[] input)
         {
-            int[] intInput = new int[input.Length / sizeof(int)];
-            Buffer.BlockCopy(input, 0, intInput, 0, input.Length);
+            int size = input.Length / sizeof(int);
+            if (size < 1) size = 1;
+            //if (input.Length % sizeof(int) != 0)
+            // throw new Exception("Nije moguce dekodirati nesto sto je manje od 4 byte");
+            int[] intInput = new int[size];
+            Buffer.BlockCopy(input, 0, intInput, 0, size * sizeof(int));
             return algorithm.Decrypt(intInput);
         }
     }

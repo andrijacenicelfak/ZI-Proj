@@ -1,5 +1,5 @@
 
-namespace Algorithms.Files
+namespace Algorithms.Interfaces
 {
     class BifidInterface : AlgorithmInterface
     {
