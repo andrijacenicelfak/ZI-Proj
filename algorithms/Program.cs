@@ -1,17 +1,29 @@
 ﻿using Algorithms;
 using Algorithms.Files;
 
+TigerHash hash = new TigerHash();
+
+byte[] bytes = System.IO.File.ReadAllBytes("file.txt");
+
+
+hash.ComputeHash(bytes);
+byte[] bhash1 = hash.FinalHashValue;
+
+foreach (byte b in bhash1)
+    Console.Write(b + " ");
+Console.WriteLine();
+
 // int[] privateKey = { 1, 2, 4, 9, 17, 34, 69, 140 };
 // int M = 313;
 // int N = 101;
 
 // FileEncription file = new FileEncription(new KnapsackInterface(N, M, privateKey));
-
+/*
 FileEncription file = new FileEncription(new RC6Interface("Jasammalazaba"));
 
 file.EncryptBMPFile("bmp_24.bmp", "bmp_24_enc.bmp");
 file.DecryptBMPFile("bmp_24_enc.bmp", "bmp_24_dec.bmp");
-
+*/
 /*
 //RC6 CRT/Obican
 RC6CRT rc = new RC6CRT("Pralinajemalamaca");
