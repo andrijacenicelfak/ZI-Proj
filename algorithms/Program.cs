@@ -1,6 +1,9 @@
 ﻿using Algorithms;
 using Algorithms.Interfaces;
 
+
+
+/*
 byte[] bytes = System.IO.File.ReadAllBytes("file.txt");
 
 int[] privateKey = { 1, 2, 4, 9, 17, 34, 69, 140 };
@@ -21,6 +24,7 @@ Console.WriteLine();
 foreach (byte b in dec)
     Console.Write(b + " ");
 Console.WriteLine();
+*/
 /*
 TigerHash hash = new TigerHash();
 hash.ComputeHash(bytes);
@@ -30,16 +34,18 @@ foreach (byte b in bhash1)
     Console.Write(b + " ");
 Console.WriteLine();
 */
-// int[] privateKey = { 1, 2, 4, 9, 17, 34, 69, 140 };
-// int M = 313;
-// int N = 101;
-
-// FileEncription file = new FileEncription(new KnapsackInterface(N, M, privateKey));
 /*
-FileEncription file = new FileEncription(new RC6Interface("Jasammalazaba"));
+int[] privateKey = { 1, 2, 4, 9, 17, 34, 69, 140 };
+int M = 313;
+int N = 101;
+Encription file = new Encription(new KnapsackInterface(N, M, privateKey));
+*/
 
+Encryption file = new Encryption(new RC6CRTInterface("plaky"));
 file.EncryptBMPFile("bmp_24.bmp", "bmp_24_enc.bmp");
 file.DecryptBMPFile("bmp_24_enc.bmp", "bmp_24_dec.bmp");
+
+/*
 */
 /*
 //RC6 CRT/Obican
@@ -100,4 +106,5 @@ char[] decchar = new char[dec.Length / 2];
 Buffer.BlockCopy(dec, 0, decchar, 0, dec.Length);
 
 Console.WriteLine(new String(decchar));
-*/
+
+/**/

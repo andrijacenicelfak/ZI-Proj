@@ -12,7 +12,9 @@ namespace Algorithms
         private uint[] S;
         private uint[] L;
         private ulong mod;
+
         private uint Pw, Qw;
+
         public RC6(string key)
         {
             Pw = (uint)Math.Ceiling((Math.E - 2) * Math.Pow(2, W));
