@@ -271,13 +271,6 @@ namespace Algorithms
             return dec;
         }
 
-        public void EncryptTxtFile(string inputName, string outputName)
-        {
-        }
-
-        public void DecryptTxtFile(string inputName, string outputName)
-        {
-        }
     }
 
 }

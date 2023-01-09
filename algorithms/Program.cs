@@ -63,6 +63,9 @@ public class Program
             case "rc6crt":
                 await SendRC6CodedData();
                 break;
+            case "hash":
+                await GetHash();
+                break;
             default:
                 Console.WriteLine("Komanda nije prepoznata!");
                 break;
@@ -267,6 +270,35 @@ public class Program
         return true;
     }
 
+    public async Task<bool> GetHash()
+    {
+        Console.WriteLine("Poruka koja ce da se hesira : ");
+        string? msg = "";
+        msg = Console.ReadLine();
+
+        TigerHashData tdata = new TigerHashData();
+        tdata.data = new byte[msg.Length / 2];
+        Buffer.BlockCopy(msg.ToCharArray(), 0, tdata.data, 0, tdata.data.Length);
+        Console.Write("Bajtovi poruke : ");
+        foreach (byte b in tdata.data)
+            Console.Write(b + " ");
+        Console.WriteLine();
+
+
+        var rsp = await client.PostAsJsonAsync<TigerHashData>("tigerHash", tdata);
+        TigerHashData? rspData = await rsp.Content.ReadFromJsonAsync<TigerHashData>();
+        if (rspData == null)
+        {
+            Console.WriteLine("Servis nije odgovorio!");
+            return true;
+        }
+        Console.Write("Hash za tu poruku je : ");
+        foreach (byte b in rspData.data)
+            Console.Write(b + " ");
+        Console.WriteLine();
+
+        return true;
+    }
 
     public static async Task Main()
     {

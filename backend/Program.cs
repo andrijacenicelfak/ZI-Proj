@@ -21,13 +21,20 @@ RC6 rc = new RC6(rc6Key);
 string rc6crtKey = "KLJUCzaRC6CRT";
 RC6CRT rc6crt = new RC6CRT(rc6crtKey);
 
+TigerHash hash = new TigerHash();
 
 app.MapGet("/KnapsackKey", () => new KnapsackKey { key = publicKey });
 app.MapGet("/BifidKey", () => new BifidKey { key = bifidKey });
 app.MapGet("/RC6Key", () => new RC6Key { key = rc6Key });
 app.MapGet("/RC6CRTKey", () => new RC6Key { key = rc6crtKey });
 
+app.MapPost("/tigerHash", (TigerHashData data) =>
+{
+    TigerHashData rsp = new TigerHashData();
+    rsp.data = hash.ComputeHash(data.data!);
 
+    return rsp;
+});
 
 app.MapPost("/knapsackSendEncrypted", (KnapsackDataEncrypted kdata) =>
 {

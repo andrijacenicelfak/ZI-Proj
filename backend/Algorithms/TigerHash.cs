@@ -42,6 +42,8 @@ namespace Algorithms
         {
             ProcessedBytes = 0;
             PartialBlockFill = 0;
+            Accumulator = new ulong[] { 0x0123456789ABCDEFUL, 0xFEDCBA9876543210UL, 0xF096A5B4C3B2E187UL };
+
             if (PartialBlockBuffer == null) PartialBlockBuffer = new byte[BlockSize];
         }
 
