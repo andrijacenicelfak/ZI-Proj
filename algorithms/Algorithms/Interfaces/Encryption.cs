@@ -170,19 +170,17 @@ namespace Algorithms.Interfaces
             var chunks = Enumerable.Range(0, numThreads).Select(i =>
             {
                 int start = i * chunkSize;
-                int end = start + chunkSize - 1;
-                return new { start, end };
+                return new { start, i };
             }).ToArray();
 
             var tasks = chunks.Select(chunk => Task.Run(() =>
             {
-                using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-                {
-                    stream.Seek(chunk.start, SeekOrigin.Begin);
-                    var buffer = new byte[chunkSize];
-                    int bytesRead = stream.Read(buffer, 0, chunkSize);
-                    Buffer.BlockCopy(buffer, chunk.start, file, chunk.start, chunkSize);
-                }
+                var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+                var buffer = new byte[chunkSize];
+                stream.Seek(chunk.start, SeekOrigin.Begin);
+                int bytesRead = stream.Read(buffer, 0, chunkSize);
+                Buffer.BlockCopy(buffer, 0, file, chunk.start, bytesRead);
+                stream.Close();
             })).ToArray();
             Task.WaitAll(tasks);
             return file;
@@ -192,6 +190,21 @@ namespace Algorithms.Interfaces
         {
             FileStream output = new FileStream(filePath, FileMode.Create, FileAccess.Write);
             output.Write(file, 0, file.Length);
+            output.Close();
+        }
+
+        public void EncryptFileParallelNew(string inputName, string outputName, int numOfThreads)
+        {
+            byte[] bytes = LoadFileParallel(inputName, numOfThreads);
+            byte[] enc = Algorithm.EncryptParallel(bytes);
+            SaveFile(enc, outputName);
+        }
+
+        public void DecryptFileParallelNew(string inputName, string outputName, int numOfThreads)
+        {
+            byte[] bytes = LoadFileParallel(inputName, numOfThreads);
+            byte[] dec = Algorithm.DecryptParallel(bytes);
+            SaveFile(bytes, outputName);
         }
     }
 }

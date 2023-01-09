@@ -1,7 +1,6 @@
 using System.Security.Cryptography;
 using System;
 
-
 namespace Algorithms
 {
 

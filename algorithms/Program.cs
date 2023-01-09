@@ -95,16 +95,33 @@ public class Program
                     Console.WriteLine("Nevalidna komanda! " + e.Message);
                 }
                 break;
-            case "filep":
+            case "bmp":
                 try
                 {
-                    Console.WriteLine(command[3]);
-                    EncryptFileRC6Parallel(command[1], command[2], command[3]);
+                    switch (command[1])
+                    {
+                        case "rc6":
+                            EncryptFileRC6BMP(command[2], command[3], command[4]);
+                            break;
+                        case "rc6crt":
+                            EncryptFileRC6CRTBMP(command[2], command[3], command[4]);
+                            break;
+                        case "knapsack":
+                            EncryptFileKnapsackBMP(command[2], command[3], command[4]);
+                            break;
+                        default:
+                            Console.WriteLine("Nije prepoznat algoritam : " + command[1]);
+                            break;
+                    }
+                    Console.WriteLine("Uspesno!");
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine("Nevalidna komanda! " + e.Message);
                 }
+                break;
+            case "filep":
+                EncryptFileRC6Parallel(command[1], command[2], command[3]);
                 break;
             default:
                 Console.WriteLine("Komanda : " + command[0] + " nije prepoznata!");
@@ -134,6 +151,27 @@ public class Program
         e.DecryptFile(encFile, decFile);
     }
 
+    public void EncryptFileRC6BMP(string inputFile, string encFile = "enc.bin", string decFile = "dec.bin")
+    {
+        Encryption e = new Encryption(new RC6Interface(KeyRC6));
+        e.EncryptBMPFile(inputFile, encFile);
+        e.DecryptBMPFile(encFile, decFile);
+    }
+    public void EncryptFileRC6CRTBMP(string inputFile, string encFile = "enc.bin", string decFile = "dec.bin")
+    {
+        Encryption e = new Encryption(new RC6CRTInterface(KeyRC6));
+        e.EncryptBMPFile(inputFile, encFile);
+        e.DecryptBMPFile(encFile, decFile);
+    }
+
+    public void EncryptFileKnapsackBMP(string inputFile, string encFile = "enc.bin", string decFile = "dec.bin")
+    {
+        int[] privateKey = { 1, 3, 5, 10, 20, 41, 81, 162 };
+        Encryption e = new Encryption(new KnapsackInterface(101, 337, privateKey));
+        e.EncryptBMPFile(inputFile, encFile);
+        e.DecryptBMPFile(encFile, decFile);
+    }
+
     public void EncryptFileBifid(string inputFile, string encFile = "enc.txt", string decFile = "dec.txt")
     {
         Encryption e = new Encryption(new BifidInterface(KeyBifid));
@@ -144,11 +182,8 @@ public class Program
     public void EncryptFileRC6Parallel(string inputFile, string encFile = "enc.bin", string decFile = "dec.bin")
     {
         Encryption e = new Encryption(new RC6Interface(KeyRC6));
-        byte[] encbyte = e.EncryptParallel(e.LoadFileParallel(inputFile, 4), 4);
-        e.SaveFile(encbyte, encFile);
-        byte[] decbyte = e.DecryptParallel(encbyte, 4);
-        e.SaveFile(decbyte, decFile);
-
+        e.EncryptFileParallelNew(inputFile, encFile, 4);
+        e.DecryptFileParallelNew(encFile, decFile, 4);
     }
 
     public async Task<bool> GetKnapsackKey()

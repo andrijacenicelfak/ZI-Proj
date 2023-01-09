@@ -32,7 +32,6 @@ app.MapPost("/tigerHash", (TigerHashData data) =>
 {
     TigerHashData rsp = new TigerHashData();
     rsp.data = hash.ComputeHash(data.data!);
-
     return rsp;
 });
 

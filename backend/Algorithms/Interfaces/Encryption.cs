@@ -160,5 +160,37 @@ namespace Algorithms.Interfaces
             output.Close();
             input.Close();
         }
+
+        public byte[] LoadFileParallel(string filePath, int numThreads)
+        {
+            long fileSize = new FileInfo(filePath).Length;
+            int chunkSize = (int)Math.Ceiling((double)fileSize / numThreads);
+            byte[] file = new byte[chunkSize * numThreads];
+
+            var chunks = Enumerable.Range(0, numThreads).Select(i =>
+            {
+                int start = i * chunkSize;
+                return new { start, i };
+            }).ToArray();
+
+            var tasks = chunks.Select(chunk => Task.Run(() =>
+            {
+                var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+                var buffer = new byte[chunkSize];
+                stream.Seek(chunk.start, SeekOrigin.Begin);
+                int bytesRead = stream.Read(buffer, 0, chunkSize);
+                Buffer.BlockCopy(buffer, 0, file, chunk.start, bytesRead);
+                stream.Close();
+            })).ToArray();
+            Task.WaitAll(tasks);
+            return file;
+        }
+
+        public void SaveFile(byte[] file, string filePath)
+        {
+            FileStream output = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+            output.Write(file, 0, file.Length);
+            output.Close();
+        }
     }
 }

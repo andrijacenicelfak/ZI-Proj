@@ -18,11 +18,11 @@ namespace Algorithms.Interfaces
         }
         public byte[] EncryptParallel(byte[] input)
         {
-            return new byte[16];
+            return algorithm.EncryptByteArrayCRT(input);
         }
         public byte[] DecryptParallel(byte[] input)
         {
-            return new byte[16];
+            return algorithm.DecryptByteArrayCRT(input);
         }
     }
 }

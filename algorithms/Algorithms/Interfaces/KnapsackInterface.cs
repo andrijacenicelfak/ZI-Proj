@@ -28,11 +28,21 @@ namespace Algorithms.Interfaces
         }
         public byte[] EncryptParallel(byte[] input)
         {
-            return new byte[16];
+            int[] enc = algorithm.Encrypt(input);
+
+            byte[] encb = new byte[enc.Length * sizeof(int)];
+            Buffer.BlockCopy(enc, 0, encb, 0, enc.Length * sizeof(int));
+            return encb;
         }
         public byte[] DecryptParallel(byte[] input)
         {
-            return new byte[16];
+            int size = input.Length / sizeof(int);
+            if (size < 1) size = 1;
+            //if (input.Length % sizeof(int) != 0)
+            // throw new Exception("Nije moguce dekodirati nesto sto je manje od 4 byte");
+            int[] intInput = new int[size];
+            Buffer.BlockCopy(input, 0, intInput, 0, size * sizeof(int));
+            return algorithm.Decrypt(intInput);
         }
     }
 }
