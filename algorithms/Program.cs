@@ -49,7 +49,8 @@ public class Program
 
     public async Task<bool> Command(string txt)
     {
-        switch (txt)
+        string[] command = txt.Split(' ');
+        switch (command[0])
         {
             case "knapsack":
                 await SendKnapsackCodedMessage();
@@ -66,11 +67,88 @@ public class Program
             case "hash":
                 await GetHash();
                 break;
+            case "file":
+                try
+                {
+                    switch (command[1])
+                    {
+                        case "rc6":
+                            EncryptFileRC6(command[2], command[3], command[4]);
+                            break;
+                        case "rc6crt":
+                            EncryptFileRC6CRT(command[2], command[3], command[4]);
+                            break;
+                        case "knapsack":
+                            EncryptFileKnapsack(command[2], command[3], command[4]);
+                            break;
+                        case "bifid":
+                            EncryptFileBifid(command[2], command[3], command[4]);
+                            break;
+                        default:
+                            Console.WriteLine("Nije prepoznat algoritam : " + command[1]);
+                            break;
+                    }
+                    Console.WriteLine("Uspesno!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Nevalidna komanda! " + e.Message);
+                }
+                break;
+            case "filep":
+                try
+                {
+                    Console.WriteLine(command[3]);
+                    EncryptFileRC6Parallel(command[1], command[2], command[3]);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Nevalidna komanda! " + e.Message);
+                }
+                break;
             default:
-                Console.WriteLine("Komanda nije prepoznata!");
+                Console.WriteLine("Komanda : " + command[0] + " nije prepoznata!");
                 break;
         }
         return true;
+    }
+
+    public void EncryptFileRC6(string inputFile, string encFile = "enc.bin", string decFile = "dec.bin")
+    {
+        Encryption e = new Encryption(new RC6Interface(KeyRC6));
+        e.EncryptFile(inputFile, encFile);
+        e.DecryptFile(encFile, decFile);
+    }
+    public void EncryptFileRC6CRT(string inputFile, string encFile = "enc.bin", string decFile = "dec.bin")
+    {
+        Encryption e = new Encryption(new RC6CRTInterface(KeyRC6));
+        e.EncryptFile(inputFile, encFile);
+        e.DecryptFile(encFile, decFile);
+    }
+
+    public void EncryptFileKnapsack(string inputFile, string encFile = "enc.bin", string decFile = "dec.bin")
+    {
+        int[] privateKey = { 1, 3, 5, 10, 20, 41, 81, 162 };
+        Encryption e = new Encryption(new KnapsackInterface(101, 337, privateKey));
+        e.EncryptFile(inputFile, encFile);
+        e.DecryptFile(encFile, decFile);
+    }
+
+    public void EncryptFileBifid(string inputFile, string encFile = "enc.txt", string decFile = "dec.txt")
+    {
+        Encryption e = new Encryption(new BifidInterface(KeyBifid));
+        e.EncryptFile(inputFile, encFile);
+        e.DecryptFile(encFile, decFile);
+    }
+
+    public void EncryptFileRC6Parallel(string inputFile, string encFile = "enc.bin", string decFile = "dec.bin")
+    {
+        Encryption e = new Encryption(new RC6Interface(KeyRC6));
+        byte[] encbyte = e.EncryptParallel(e.LoadFileParallel(inputFile, 4), 4);
+        e.SaveFile(encbyte, encFile);
+        byte[] decbyte = e.DecryptParallel(encbyte, 4);
+        e.SaveFile(decbyte, decFile);
+
     }
 
     public async Task<bool> GetKnapsackKey()
@@ -239,7 +317,7 @@ public class Program
         RC6CRT rc6Service = new RC6CRT(ServiceRC6CRTKey!);
         RC6CRTData kde = new RC6CRTData();
 
-        byte[] sendData = new byte[msg.Length * sizeof(char)];
+        byte[] sendData = new byte[msg!.Length * sizeof(char)];
         Buffer.BlockCopy(msg.ToCharArray(), 0, sendData, 0, sendData.Length);
 
         kde.data = rc6Service.EncryptByteArrayCRT(sendData);
@@ -257,7 +335,7 @@ public class Program
             Console.WriteLine("Servis nije odgovorio!");
             return true;
         }
-        char[] odgkript = new char[rspData.data.Length / 2];
+        char[] odgkript = new char[rspData.data!.Length / 2];
         Buffer.BlockCopy(rspData.data, 0, odgkript, 0, rspData.data.Length);
 
         Console.WriteLine("Servise odgovorio sa : " + (new String(odgkript)));
@@ -277,7 +355,7 @@ public class Program
         msg = Console.ReadLine();
 
         TigerHashData tdata = new TigerHashData();
-        tdata.data = new byte[msg.Length / 2];
+        tdata.data = new byte[msg!.Length / 2];
         Buffer.BlockCopy(msg.ToCharArray(), 0, tdata.data, 0, tdata.data.Length);
         Console.Write("Bajtovi poruke : ");
         foreach (byte b in tdata.data)
@@ -293,7 +371,7 @@ public class Program
             return true;
         }
         Console.Write("Hash za tu poruku je : ");
-        foreach (byte b in rspData.data)
+        foreach (byte b in rspData.data!)
             Console.Write(b + " ");
         Console.WriteLine();
 

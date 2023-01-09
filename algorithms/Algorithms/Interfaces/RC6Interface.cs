@@ -16,5 +16,13 @@ namespace Algorithms.Interfaces
         {
             return algorithm.DecryptByteArray(input);
         }
+        public byte[] EncryptParallel(byte[] input)
+        {
+            return algorithm.EncryptByteArrayParallel(input);
+        }
+        public byte[] DecryptParallel(byte[] input)
+        {
+            return algorithm.DecryptByteArrayParallel(input);
+        }
     }
 }

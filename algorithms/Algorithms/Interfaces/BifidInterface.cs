@@ -27,5 +27,13 @@ namespace Algorithms.Interfaces
             Buffer.BlockCopy(coutput, 0, boutput, 0, coutput.Length * sizeof(char));
             return boutput;
         }
+
+
+        public byte[] EncryptParallel(byte[] input){
+            return new byte[16];
+        }
+        public byte[] DecryptParallel(byte[] input){
+            return new byte[16];
+        }
     }
 }

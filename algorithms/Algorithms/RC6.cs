@@ -271,6 +271,42 @@ namespace Algorithms
             return dec;
         }
 
+        public byte[] EncryptByteArrayParallel(byte[] input)
+        {
+            int missing = input.Length % (4 * sizeof(uint));
+            missing = missing == 0 ? 0 : 4 * sizeof(uint) - missing;
+            int len = input.Length + missing;
+
+            byte[] inputExtended = new byte[len];
+            Buffer.BlockCopy(input, 0, inputExtended, 0, input.Length);
+
+            byte[] enc = new byte[len];
+
+            uint[] data = new uint[4];
+
+            Parallel.For(0, len / (4 * sizeof(uint)), i =>
+            {
+                Buffer.BlockCopy(inputExtended, i * 4 * sizeof(uint), data, 0, 4 * sizeof(uint));
+                uint[] rez = Encrypt4Regs(data);
+                Buffer.BlockCopy(rez, 0, enc, i * 4 * sizeof(uint), 4 * sizeof(uint));
+            });
+
+            return enc;
+        }
+
+        public byte[] DecryptByteArrayParallel(byte[] input)
+        {
+            byte[] dec = new byte[input.Length];
+            uint[] data = new uint[4];
+            Parallel.For(0, input.Length / (4 * sizeof(uint)), i =>
+            {
+                Buffer.BlockCopy(input, i * 4 * sizeof(uint), data, 0, 4 * sizeof(uint));
+                uint[] rez = Decrypt4Regs(data);
+                Buffer.BlockCopy(rez, 0, dec, i * 4 * sizeof(uint), 4 * sizeof(uint));
+            });
+
+            return dec;
+        }
     }
 
 }
