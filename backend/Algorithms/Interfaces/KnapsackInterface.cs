@@ -1,4 +1,4 @@
-
+using System;
 namespace Algorithms.Interfaces
 {
     class KnapsackInterface : AlgorithmInterface

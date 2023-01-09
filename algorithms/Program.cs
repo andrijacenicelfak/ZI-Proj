@@ -1,173 +1,283 @@
-﻿using Algorithms;
-using Algorithms.Interfaces;
-
-
-
-/*
-byte[] bytes = System.IO.File.ReadAllBytes("file.txt");
-
-int[] privateKey = { 1, 2, 4, 9, 17, 34, 69, 140 };
-int M = 313;
-int N = 101;
-Encription e = new Encription(new KnapsackInterface(N, M, privateKey));
-
-byte[] enc = e.EncryptParallel(bytes, 8);
-
-
-byte[] dec = e.DecryptParallel(enc, 4);
-
-foreach (byte b in bytes)
-    Console.Write(b + " ");
-Console.WriteLine();
-Console.WriteLine();
-
-foreach (byte b in dec)
-    Console.Write(b + " ");
-Console.WriteLine();
-*/
-/*
-TigerHash hash = new TigerHash();
-hash.ComputeHash(bytes);
-byte[] bhash1 = hash.FinalHashValue;
-
-foreach (byte b in bhash1)
-    Console.Write(b + " ");
-Console.WriteLine();
-*/
-/*
-int[] privateKey = { 1, 2, 4, 9, 17, 34, 69, 140 };
-int M = 313;
-int N = 101;
-Encription file = new Encription(new KnapsackInterface(N, M, privateKey));
-*/
-/*
-Encryption file = new Encryption(new RC6CRTInterface("plaky"));
-file.EncryptBMPFile("bmp_24.bmp", "bmp_24_enc.bmp");
-file.DecryptBMPFile("bmp_24_enc.bmp", "bmp_24_dec.bmp");
-*/
-/*
-*/
-/*
-//RC6 CRT/Obican
-RC6CRT rc = new RC6CRT("Pralinajemalamaca");
-
-byte[] bytes = { 1, 2, 3, 4, 3, 2, 2, 3, 2, 3, 4, 1, 2, 8, 15, 14, 1, 1 };
-
-foreach (byte bajt in bytes)
-    Console.Write(bajt + " ");
-Console.WriteLine();
-
-byte[] enc = rc.EncryptByteArrayCRT(bytes);
-
-
-foreach (byte bajt in enc)
-    Console.Write(bajt + " ");
-Console.WriteLine();
-
-
-byte[] dec = rc.DecryptByteArrayCRT(enc);
-
-
-foreach (byte bajt in dec)
-    Console.Write(bajt + " ");
-Console.WriteLine();
-*/
-// Knapsack
-/*
-int[] privateKey = { 1, 2, 4, 9, 17, 34, 69, 140 };
-int M = 313;
-int N = 101;
-KnapsackCypher kc = new KnapsackCypher(N, M, privateKey);
-
-string zaba = "ja sam mala zaba";
-
-byte[] zabab = new byte[zaba.Length * sizeof(char)];
-
-Buffer.BlockCopy(zaba.ToCharArray(), 0, zabab, 0, zaba.Length * sizeof(char));
-
-foreach (byte b in zabab)
-    Console.Write(b + " ");
-Console.WriteLine();
-
-int[] enc = kc.Encrypt(zabab);
-
-foreach (int i in enc)
-    Console.Write(i + " ");
-Console.WriteLine();
-
-byte[] dec = kc.Decrypt(enc);
-
-foreach (byte b in dec)
-    Console.Write(b + " ");
-Console.WriteLine();
-
-
-char[] decchar = new char[dec.Length / 2];
-Buffer.BlockCopy(dec, 0, decchar, 0, dec.Length);
-
-Console.WriteLine(new String(decchar));
-
-/**/
-
+﻿using System;
+using System.Net.Http;
 using System.Net.Http.Json;
+using System.Threading.Tasks;
+using Algorithms;
+using Algorithms.Interfaces;
+using Algorithms.DataModels;
 
-public class KnapsackKey
-{
-    public int[] key { get; set; }
-}
 
-public class KnapsackData
-{
-    public int[] data { get; set; }
-}
 public class Program
 {
-    public static async Task Main()
+    private HttpClient client;
+
+    private int[]? ServiceKnapsackKey { get; set; }
+
+    private KnapsackCypher Knapsack;
+
+    private Bifid bifid;
+    private string KeyBifid { get; set; }
+    private string? ServiceBifidKey { get; set; }
+
+    private string? ServiceRC6Key { get; set; }
+    private string KeyRC6 { get; set; }
+
+    private RC6 RC6Cipher;
+
+
+    private string? ServiceRC6CRTKey { get; set; }
+    private string KeyRC6CRT { get; set; }
+
+    private RC6CRT RC6CRTCipher;
+    public Program()
     {
-        using HttpClient client = new()
+        client = new()
         {
             BaseAddress = new Uri("http://localhost:5184")
         };
-        KnapsackKey kkey = await client.GetFromJsonAsync<KnapsackKey>("key");
+        int[] privateKey = { 1, 3, 5, 10, 20, 41, 81, 162 };
+        Knapsack = new KnapsackCypher(101, 337, privateKey);
+        KeyBifid = "ovojekljuczabifid";
+        bifid = new Bifid(KeyBifid);
+        KeyRC6 = "kljuczarc6annanana";
+        RC6Cipher = new RC6(KeyRC6);
 
-        string zaSlanje = "Ovo je string koji ce da se kriptuje i posalje";
-        byte[] podaci = new byte[zaSlanje.Length * sizeof(char)];
-        Buffer.BlockCopy(zaSlanje.ToCharArray(), 0, podaci, 0, podaci.Length);
-        KnapsackData kdata = new KnapsackData();
-        kdata.data = KnapsackCypher.EncryptWithKey(podaci, kkey.key);
-        var rsp = await client.PostAsJsonAsync<KnapsackData>("send", kdata);
+
+        KeyRC6CRT = "kljuczarc6annanana";
+        RC6CRTCipher = new RC6CRT(KeyRC6CRT);
+    }
+
+    public async Task<bool> Command(string txt)
+    {
+        switch (txt)
+        {
+            case "knapsack":
+                await SendKnapsackCodedMessage();
+                break;
+            case "bifid":
+                await SendBifidCodedData();
+                break;
+            case "rc6":
+                await SendRC6CodedData();
+                break;
+            case "rc6crt":
+                await SendRC6CodedData();
+                break;
+            default:
+                Console.WriteLine("Komanda nije prepoznata!");
+                break;
+        }
+        return true;
+    }
+
+    public async Task<bool> GetKnapsackKey()
+    {
+        KnapsackKey? kkey = await client.GetFromJsonAsync<KnapsackKey>("KnapsackKey");
+        if (kkey != null)
+            ServiceKnapsackKey = kkey!.key!;
+        else
+        {
+            Console.WriteLine("Neuspesno preuzimanje kljuca!");
+            return false;
+        }
+        return true;
+    }
+    public async Task<bool> SendKnapsackCodedMessage()
+    {
+        if (ServiceKnapsackKey == null)
+            if (!(await GetKnapsackKey()))
+                return false;
+
+        Console.WriteLine("Poruka za servis : ");
+        string? msg = "";
+        msg = Console.ReadLine();
+        byte[] msgData = new byte[msg!.Length * sizeof(char)];
+        Buffer.BlockCopy(msg.ToCharArray(), 0, msgData, 0, msgData.Length);
+        KnapsackDataEncrypted kde = new KnapsackDataEncrypted();
+        kde.data = KnapsackCypher.EncryptWithKey(msgData, ServiceKnapsackKey!);
+        kde.senderPublicKey = Knapsack.publicKey;
+        Console.Write("Saljem porku : " + msg + "\nKriptovana : ");
+        foreach (int i in kde.data)
+            Console.Write(i + " ");
+        Console.WriteLine();
+
+        var rsp = await client.PostAsJsonAsync<KnapsackDataEncrypted>("knapsackSendEncrypted", kde);
+        KnapsackDataEncrypted? rspData = await rsp.Content.ReadFromJsonAsync<KnapsackDataEncrypted>();
+        if (rspData == null)
+        {
+            Console.WriteLine("Servis nije odgovorio!");
+            return true;
+        }
+        Console.WriteLine("Servise odgovorio sa : ");
+        foreach (int i in rspData!.data!)
+            Console.Write(i + " ");
+        Console.WriteLine();
+        byte[] rspDataBytes = Knapsack.Decrypt(rspData.data);
+        char[] rspDataChar = new char[rspDataBytes.Length / 2];
+        Buffer.BlockCopy(rspDataBytes, 0, rspDataChar, 0, rspDataBytes.Length);
+
+        Console.WriteLine("Dekodirano : " + (new String(rspDataChar)));
+        return true;
+    }
+
+    public async Task<bool> GetBifidKey()
+    {
+        BifidKey? kkey = await client.GetFromJsonAsync<BifidKey>("BifidKey");
+        if (kkey != null)
+        {
+            ServiceBifidKey = kkey!.key!;
+        }
+        else
+        {
+            Console.WriteLine("Neuspesno preuzimanje kljuca!");
+            return false;
+        }
+        return true;
+    }
+    public async Task<bool> SendBifidCodedData()
+    {
+        if (ServiceBifidKey == null)
+            if (!(await GetBifidKey()))
+                return false;
+
+        Console.WriteLine("Poruka za servis : ");
+        string? msg = "";
+        msg = Console.ReadLine();
+
+        Bifid serviceBifid = new Bifid(ServiceBifidKey!);
+
+        string msgSend = serviceBifid.Encrypt(msg!);
+        Console.WriteLine("Saljem poruku : " + msg + "\nKodirano : " + msgSend);
+        BifidData sdata = new BifidData();
+        sdata.data = msgSend;
+        sdata.senderKey = KeyBifid;
+
+        var rsp = await client.PostAsJsonAsync<BifidData>("bifidSendEncrypted", sdata);
+        BifidData? rspData = await rsp.Content.ReadFromJsonAsync<BifidData>();
+        if (rspData == null)
+        {
+            Console.WriteLine("Servis nije odgovorio!");
+            return true;
+        }
+        Console.WriteLine("Servis odgovorio sa : " + rspData.data!);
+        Console.WriteLine("Dekriptovano : " + bifid.Decrypt(rspData.data!));
+
+        return true;
+    }
+
+
+    public async Task<bool> GetRC6Key()
+    {
+        RC6Key? kkey = await client.GetFromJsonAsync<RC6Key>("RC6Key");
+        if (kkey != null)
+        {
+            ServiceRC6Key = kkey!.key!;
+        }
+        else
+        {
+            Console.WriteLine("Neuspesno preuzimanje kljuca!");
+            return false;
+        }
+        return true;
+    }
+    public async Task<bool> SendRC6CodedData()
+    {
+        if (ServiceRC6Key == null)
+            if (!(await GetRC6Key()))
+                return false;
+
+        Console.WriteLine("Poruka za servis : ");
+        string? msg = "";
+        msg = Console.ReadLine();
+        RC6 rc6Service = new RC6(ServiceRC6Key!);
+        RC6Data kde = new RC6Data();
+        kde.data = rc6Service.EncryptStringFaster(msg!);
+        kde.senderKey = KeyRC6;
+        Console.WriteLine("Saljem porku : " + msg + "\nKriptovana : " + kde.data);
+
+        var rsp = await client.PostAsJsonAsync<RC6Data>("RC6SendEncrypted", kde);
+        RC6Data? rspData = await rsp.Content.ReadFromJsonAsync<RC6Data>();
+        if (rspData == null)
+        {
+            Console.WriteLine("Servis nije odgovorio!");
+            return true;
+        }
+        Console.WriteLine("Servise odgovorio sa : " + rspData.data);
+
+        Console.WriteLine("Dekodirano : " + RC6Cipher.DecodeStringFaster(rspData.data!));
+
+        return true;
+    }
+
+
+    public async Task<bool> GetRC6CRTKey()
+    {
+        RC6CRTKey? kkey = await client.GetFromJsonAsync<RC6CRTKey>("RC6Key");
+        if (kkey != null)
+        {
+            ServiceRC6CRTKey = kkey!.key!;
+        }
+        else
+        {
+            Console.WriteLine("Neuspesno preuzimanje kljuca!");
+            return false;
+        }
+        return true;
+    }
+    public async Task<bool> SendRC6CRTCodedData()
+    {
+        if (ServiceRC6Key == null)
+            if (!(await GetRC6Key()))
+                return false;
+
+        Console.WriteLine("Poruka za servis : ");
+        string? msg = "";
+        msg = Console.ReadLine();
+        RC6CRT rc6Service = new RC6CRT(ServiceRC6CRTKey!);
+        RC6CRTData kde = new RC6CRTData();
+
+        byte[] sendData = new byte[msg.Length * sizeof(char)];
+        Buffer.BlockCopy(msg.ToCharArray(), 0, sendData, 0, sendData.Length);
+
+        kde.data = rc6Service.EncryptByteArrayCRT(sendData);
+        kde.senderKey = KeyRC6CRT;
+
+        char[] kriptData = new char[kde.data.Length / 2];
+        Buffer.BlockCopy(kde.data, 0, kriptData, 0, kde.data.Length);
+
+        Console.WriteLine("Saljem porku : " + msg + "\nKriptovana : " + (new String(kriptData)));
+
+        var rsp = await client.PostAsJsonAsync<RC6CRTData>("RC6SendEncrypted", kde);
+        RC6CRTData? rspData = await rsp.Content.ReadFromJsonAsync<RC6CRTData>();
+        if (rspData == null)
+        {
+            Console.WriteLine("Servis nije odgovorio!");
+            return true;
+        }
+        char[] odgkript = new char[rspData.data.Length / 2];
+        Buffer.BlockCopy(rspData.data, 0, odgkript, 0, rspData.data.Length);
+
+        Console.WriteLine("Servise odgovorio sa : " + (new String(odgkript)));
+
+        byte[] dekodirano = RC6CRTCipher.DecryptByteArrayCRT(rspData.data);
+        char[] dekChar = new char[dekodirano.Length / 2];
+        Buffer.BlockCopy(dekodirano, 0, dekChar, 0, dekodirano.Length);
+        Console.WriteLine("Dekodirano : " + (new String(dekChar)));
+
+        return true;
+    }
+
+
+    public static async Task Main()
+    {
+        Program p = new Program();
+        string? command = "";
+        while (command != "end")
+        {
+            Console.WriteLine("Ukucaj komandu : ");
+            command = Console.ReadLine();
+            if (command != "" && command != "end")
+                await p.Command(command!);
+        }
     }
 }
-
-/*
-using System.Text.Json;
-HttpClient client = new HttpClient();
-HttpResponseMessage msg = await client.GetAsync("http://localhost:5184/key");
-string s = await msg.Content.ReadAsStringAsync();
-
-KnapsackKey key = new KnapsackKey();
-key = JsonSerializer.Deserialize<KnapsackKey>(s);
-
-foreach (int i in key.key)
-    Console.Write(i + " ");
-Console.WriteLine();
-
-string zaba = "ja sam mala zaba";
-
-byte[] zabab = new byte[zaba.Length * sizeof(char)];
-
-Buffer.BlockCopy(zaba.ToCharArray(), 0, zabab, 0, zaba.Length * sizeof(char));
-
-KnapsackData podaci = new KnapsackData();
-podaci.data = KnapsackCypher.EncryptWithKey(zabab, key.key);
-var content = new StringContent(JsonSerializer.Serialize<KnapsackData>(podaci));
-var rsp = await client.PostAsync("http://localhost:5184/key", content);
-
-public record struct KnapsackKey
-{
-    public int[] key;
-}
-public record struct KnapsackData
-{
-    public int[] data;
-}*/

@@ -54,7 +54,7 @@ namespace Algorithms
             return rez;
         }
 
-        public static int[] EncryptWithKey(byte[] bytes, byte[] publicKey)
+        public static int[] EncryptWithKey(byte[] bytes, int[] key)
         {
             int index = 0;
             int[] rez = new int[bytes.Length];
@@ -66,7 +66,7 @@ namespace Algorithms
                 {
                     if ((b & v) > 0)
                     {
-                        cr += publicKey[i];
+                        cr += key[i];
                     }
                     v = (byte)(v << 1);
                 }
