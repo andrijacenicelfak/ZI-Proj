@@ -10,3 +10,4 @@ Algoritmi :
  
 Implementacija web servisa koji koristi ove algoritme za komunikaciju sa klijentima.
 Tehnologije : .NET 7
+Više o implementaciji u dokumentu about.pdf
